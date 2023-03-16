@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title>Tests</title>
+    </head>
+    <body>
+        <h1>Тестовое для Relabs</h1>
+        <form>
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button onclick="sendMessage(event)">Отправить</button>
+        </form>
+        <ol id='messages'>
+        </ol>
+        <script>
+            var socket = new WebSocket("ws://localhost:8000/ws");
+            socket.onmessage = function(event) {
+                var messages = document.getElementById('messages');
+                var message = document.createElement('li');
+                var content = document.createTextNode(event.data);
+                message.appendChild(content);
+                messages.appendChild(message);
+            };
+            function sendMessage(event) {
+                var input = document.getElementById("messageText");
+                var message = input.value;
+                var payload = { "message": message };
+                socket.send(JSON.stringify(payload));
+                input.value = '';
+                event.preventDefault();
+            }
+        </script>
+    </body>
+</html>
