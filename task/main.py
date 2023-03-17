@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 import json
 
 app = FastAPI()
-
+connections = []
 
 @app.get("/")
 async def get():
@@ -12,8 +12,15 @@ async def get():
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    while True:
-        data = await websocket.receive_text()
-        message = json.loads(data)
-        response = message['message']
-        await websocket.send_text(response)
+    connections.append(websocket)
+    number = 0
+    try:
+        while True:
+            data = await websocket.receive_text()
+            message = json.loads(data)
+            number += 1
+            response = f"{number}: {message['message']}"
+            for connection in connections:
+                await connection.send_text(response)
+    except:
+        connections.remove(websocket)
