@@ -20,7 +20,8 @@
             socket.onmessage = function(event) {
                 var messages = document.getElementById('messages');
                 var message = document.createElement('li');
-                var content = document.createTextNode(event.data);
+                var json_data = JSON.parse(event.data);
+                var content = document.createTextNode(json_data.number + ' ' + json_data.message);
                 message.appendChild(content);
                 messages.appendChild(message);
             };
@@ -28,7 +29,8 @@
                 var input = document.getElementById("messageText");
                 var message = input.value;
                 var payload = { "message": message };
-                socket.send(JSON.stringify(payload));
+                var json_payload = JSON.stringify(payload);
+                socket.send(json_payload);
                 input.value = '';
                 event.preventDefault();
             }
