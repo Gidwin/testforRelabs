@@ -13,8 +13,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     number = 0
     while True:
-        data = await websocket.receive_text()
-        message = json.loads(data)
+        data = await websocket.receive_json()
         number += 1
-        response = {"number": number, "message": message["message"]}
+        response = {"number": number, "message": data["message"]}
         await websocket.send_json(response)
